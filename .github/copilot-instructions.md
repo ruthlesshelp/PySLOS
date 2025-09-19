@@ -1,95 +1,106 @@
-# GitHub Copilot Instructions for this project
+# GitHub Copilot Instructions for PySLOS
 
 ## Project Overview
 
-This is a Python-based project using Test-Driven Development (TDD) with pytest for testing logic and related features.
+PySLOS is a Python-based Student Loan Origination System designed using modular layered architecture. This project follows TDD principles with comprehensive business domain modeling for financial services.
+
+**Current Status**: Documentation-complete, implementation-ready project with detailed PRD, system design, and test plans.
+
+## Architecture Overview
+
+PySLOS implements a **Modular Layered Architecture** with these core layers:
+- **Presentation Layer**: Flask web interface (future)
+- **Service Layer**: Business logic and domain rules
+- **Financial Engine**: Loan calculations and amortization
+- **Data Access Layer**: SQLAlchemy ORM with Repository pattern
+- **Database Layer**: PostgreSQL with normalized schema
+
+**Key Design Patterns**: Repository, Factory, Domain Model, Data Mapper
 
 ## Project Structure
 
-The project follows a clean TDD architecture with strict separation of concerns:
-- `src/` - Contains the main business logic.
-- `tests/test_*.py` - TDD test files that test the functionality of the code in `src/`
-- `.gitignore` - Comprehensive ignore patterns for Python, IDE, and OS-specific files
-- `pyproject.toml` - Modern Python project configuration and dependencies
+Expected structure when implemented:
+- `src/` - Main business logic organized by domain
+- `src/entities/` - Domain models (Individual, Student, Application)
+- `src/repositories/` - Data access layer
+- `src/services/` - Business logic and orchestration
+- `src/financial/` - Loan calculation engine
+- `tests/` - Comprehensive TDD test suite
+- `docs/` - Complete technical documentation (PRD.md, SYSTEM_DESIGN.md, TEST_PLAN.md)
 
-**Note:** This project uses traditional TDD testing pattern with unit test files (`test_*.py`).
+## Domain Knowledge
 
-## Tools and Dependencies
+**Core Business Entities**:
+- `Individual`: Personal info (first/last name, DOB, etc.)
+- `Student`: Extends Individual with high school information
+- `Application`: Loan details linked to Student (principal, APR, term)
 
-This project uses pytest for testing. Key dependencies include:
-- `pytest` - Testing framework
-- `pytest-cov` - Code coverage plugin for pytest to measure test coverage
-- Python 3.8+ for modern language features
+**Critical Business Rules** (from docs/PRD.md):
+- Borrower must be ≥ 18 years old
+- Loan principal: $1,000–$999,999.99
+- APR range: 0.01%–19.99%
+- Loan term: 1–360 months
+- One student can have multiple applications
 
-## Code Coverage
+**Financial Calculations**:
+- Monthly payment using amortization formula
+- APR to monthly rate conversion (6 decimal precision)
 
-The project should eventually achieve 100% code coverage using `pytest-cov`:
-- All business logic in the `src/` directory is fully tested
-- Coverage includes both statement and branch coverage
-- HTML coverage reports are generated in the `htmlcov/` directory
-- XML coverage reports are generated as `coverage.xml`
-- Terminal coverage reports show complete coverage status
+## Technology Stack
 
-To run tests with coverage:
+- **Framework**: Flask for web layer
+- **ORM**: SQLAlchemy with Repository pattern
+- **Database**: PostgreSQL
+- **Testing**: pytest with 100% coverage target
+- **Validation**: Marshmallow schemas
+- **Python**: 3.11+ required
+
+## Development Workflow
+
+**TDD Implementation Pattern**:
+1. Reference `docs/TEST_PLAN.md` for testing strategy
+2. Write failing tests for business requirements
+3. Implement minimum code to pass tests
+4. Refactor while maintaining green tests
+
+**Key Files for Context**:
+- `docs/PRD.md` - Complete business requirements and user stories
+- `docs/SYSTEM_DESIGN.md` - Detailed architecture and component design
+- `docs/TEST_PLAN.md` - Testing strategy and patterns
+
+## Testing Strategy
+
+**Test Coverage**: Target 100% coverage using `pytest-cov`
+
 ```bash
 pytest tests/ -v --cov=src --cov-report=html --cov-report=term-missing
 ```
 
-Coverage analysis tools:
-- Run `python analyze_coverage.py` for detailed coverage analysis
-- View HTML report: `htmlcov/index.html`
+**Test Organization** (per TEST_PLAN.md):
+- `tests/test_entities.py` - Domain model tests
+- `tests/test_repositories.py` - Data access tests  
+- `tests/test_financial.py` - Loan calculation tests
+- `tests/test_services.py` - Business logic tests
 
-## TDD Testing Patterns
+**Testing Patterns**:
+- AAA pattern (Arrange, Act, Assert)
+- Descriptive test names: `test_calculate_monthly_payment_with_valid_input_expect_correct_amount`
+- Data-driven testing for boundary values
+- Mock external dependencies (database, external services)
 
-When working with TDD tests, follow these patterns:
+## Exception Handling Conventions
 
-1. Write a failing test that defines an incremental functional requirement.
-2. Implement the minimum code required to make the test pass.
-3. Refactor the code while keeping the tests green.
-4. Stop to allow for code review and feedback.
+Use specific exceptions for different error conditions:
+- `ValueError` - Invalid input parameters
+- `BusinessRuleError` - Domain rule violations (custom exception)
+- `DatabaseError` - Data persistence issues (custom exception)
+- `NotImplementedError` - Placeholder for future features
 
-Use test files to organize tests logically and avoid clutter, as described in the `tests/TEST_PLAN.md` file.
+## Implementation Priorities
 
-Use corresponding `tests/test_*.py` files described in the `tests/TEST_PLAN.md` file.
-
-Use Arrange, Act, Assert comments within the test methods to clarify the test structure.
-
-Keep the test methods short and focused on a single behavior.
-
-Name the test methods descriptively to indicate the behavior being tested, for example:
-- `test_calculate_with_valid_input_expect_proper_result`
-- `test_calculate_with_invalid_input_expect_value_error`
-
-## Exception Handling
-
-In the code under test, use specific exceptions to indicate different error conditions:
-
-Use `NotImplementedError` for unimplemented features or functionality.
-
-Use `ValueError` built-in exception when an operation or function receives an argument that has the correct type but is an inappropriate or invalid value.
-
-Use `BusinessRuleError` for violations of business rules or logic.
-
-Use `DatabaseError` for errors related to database operations or queries.
-
-## Testing Conventions
-
-**Important**: This project exclusively uses TDD testing. All testing should go through the TDD workflow with corresponding `test_*.py` files.
-
-## Code Organization
-
-Keep business logic separate from test code.
-
-## Project Maintenance
-
-The project includes a comprehensive `.gitignore` file that excludes:
-- Python bytecode and cache files (`__pycache__/`, `*.pyc`)
-- Virtual environments (`.venv/`, `venv/`)
-- IDE-specific files (VS Code, PyCharm)
-- OS-specific files (macOS `.DS_Store`, Windows `Thumbs.db`)
-- Testing artifacts (`.pytest_cache/`, coverage reports)
-
-When adding new functionality, ensure:
-1. TDD tests are created as `tests/test_*.py` files
-2. Empty or unused test files are removed to keep the project clean
-3. All new code paths are tested to maintain 100% coverage
+When implementing, follow this sequence based on the architecture:
+1. **Entities** - Start with domain models (Individual, Student, Application)
+2. **Financial Engine** - Core loan calculation logic
+3. **Repositories** - Data access layer with SQLAlchemy
+4. **Services** - Business logic orchestration
+5. **Flask Layer** - Web interface (last priority)
