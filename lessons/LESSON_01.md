@@ -1,148 +1,216 @@
-# Lesson 01: Domain Entities and TDD Foundation
+# Lesson 01: TDD Foundation with Financial Calculator
 
 ## 🎯 Learning Objectives
 
 By the end of this lesson, you will:
-- Understand how to implement domain entities using TDD
-- Create the foundational data models for the PySLOS system
-- Set up the project structure and testing framework
-- Practice the Red-Green-Refactor TDD cycle
+- **Experience textbook TDD** - tests driving design and existing before implementation
+- Understand the **Red-Green-Refactor cycle** through practical application
+- Set up professional Python project structure with pytest
+- Implement a **FinancialCalculator** class using pure TDD approach
+- Learn how business requirements translate directly to test cases
 
-## 📋 What You'll Build
+## � **TDD Red Phase: ACCOMPLISHED!**
 
-In this lesson, you'll implement the three core domain entities:
+We've successfully created the perfect TDD starting point:
 
-1. **Individual** - Base person entity with personal information
-2. **Student** - Extends Individual with high school information  
-3. **Application** - Loan application linked to a Student
-
-## 🏗️ Project Setup Tasks
-
-### Step 1: Create Project Structure
-Create the following directories and files:
+### ✅ **What We've Built**
 
 ```
-src/
-├── __init__.py
-├── entities/
+PySLOS/
+├── src/
 │   ├── __init__.py
-│   ├── individual.py
-│   ├── student.py
-│   └── application.py
-└── exceptions.py
-
-tests/
-├── __init__.py
-├── test_entities.py
-└── conftest.py
-
-requirements.txt
-pytest.ini
+│   └── financial/
+│       └── __init__.py              # Ready for calculator.py
+├── tests/
+│   ├── __init__.py
+│   └── test_financial.py           # 🔴 4 FAILING tests
+├── lessons/
+│   └── LESSON_01.md               # This lesson plan
+├── requirements.txt               # pytest, pytest-cov
+└── pytest.ini                   # Test configuration
 ```
 
-### Step 2: Install Dependencies
-Create `requirements.txt` with:
+### 🎯 **Perfect TDD Example in Action**
+
+Our failing test demonstrates **TDD done right**:
+
+```python
+# THIS IS WHAT WE WANT IN TDD! �
+def test_calculate_monthly_payment_with_valid_input_expect_correct_amount(self):
+    # Arrange
+    from src.financial.calculator import FinancialCalculator  # ❌ Module doesn't exist yet!
+    
+    calculator = FinancialCalculator()  # ❌ Class doesn't exist yet!
+    principal = Decimal('10000.00')
+    annual_percentage_rate = Decimal('6.0')
+    term_months = 12
+    
+    # Act
+    monthly_payment = calculator.calculate_monthly_payment(
+        principal=principal,
+        apr=annual_percentage_rate,
+        term_months=term_months
+    )
+    
+    # Assert
+    expected_payment = Decimal('860.66')
+    assert monthly_payment == expected_payment
 ```
-pytest>=7.0.0
-pytest-cov>=4.0.0
+
+**Current Test Output** (exactly what we want!):
+```bash
+ModuleNotFoundError: No module named 'src.financial.calculator'
 ```
 
-### Step 3: Configure Testing
-Create `pytest.ini` for test configuration.
+This is **perfect TDD Red phase** - clean failing test because the module doesn't exist yet! 🔴
 
-## 🧪 TDD Implementation Sequence
+## 📋 What We're Building: Financial Calculator
 
-### Phase 1: Individual Entity
-Following TDD (Red-Green-Refactor):
+### Business Requirements Embedded in Tests
 
-**Business Requirements** (from docs/PRD.md):
-- First name, last name (required)
-- Middle initial, suffix (optional)
-- Date of birth (required, must be in past)
-- Must be 18+ years old for loan eligibility
+Our tests contain real financial business rules from `docs/PRD.md`:
 
-**TDD Steps**:
-1. Write failing test for Individual creation
-2. Implement minimal Individual class
-3. Write failing test for age validation
-4. Implement age validation logic
-5. Refactor for clean code
+1. **Monthly Payment Calculation**
+   - Use standard amortization formula
+   - Example: $10K loan, 6% APR, 12 months = $860.66/month
 
-### Phase 2: Student Entity  
-**Business Requirements**:
-- Inherits from Individual
-- High school name (required)
-- High school city, state (required)
-- High school graduation year (optional)
+2. **Principal Validation** 
+   - Must be between $1,000 - $999,999.99
+   - Raise `ValueError` for amounts outside range
 
-**TDD Steps**:
-1. Write failing test for Student creation
-2. Implement Student inheriting from Individual
-3. Write failing test for high school validation
-4. Implement validation logic
-5. Refactor for clean code
+3. **APR Conversion**
+   - Convert annual percentage rate to monthly rate
+   - 6 decimal precision: 6% APR = 0.005000 monthly rate
 
-### Phase 3: Application Entity
-**Business Requirements**:
-- Linked to a Student
-- Principal amount: $1,000 - $999,999.99
-- APR: 0.01% - 19.99%
-- Term: 1 - 360 months
-- Unique application ID
+4. **Comprehensive Error Handling**
+   - Descriptive error messages
+   - Business rule enforcement
 
-**TDD Steps**:
-1. Write failing test for Application creation
-2. Implement basic Application class
-3. Write failing tests for business rule validation
-4. Implement validation logic
-5. Refactor for clean code
+## 🟢 **Next: TDD Green Phase Implementation**
 
-## 💡 Key Concepts to Practice
+Now we implement **minimal code** to make our failing tests pass:
 
-### Domain-Driven Design
-- Rich domain objects with behavior, not just data
-- Business rules enforced within entities
-- Clear separation between entities
+### Step 1: Create the FinancialCalculator Class
 
-### Test-Driven Development
-- Red: Write failing test first
-- Green: Implement minimal code to pass
-- Refactor: Improve code while keeping tests green
+Create `src/financial/calculator.py` with:
 
-### Business Rule Validation
-- Age calculation and validation
-- Monetary range validation
-- Required field validation
+```python
+from decimal import Decimal
 
-## ✅ Success Criteria
+class FinancialCalculator:
+    """Financial calculations for loan origination."""
+    
+    def calculate_monthly_payment(self, principal: Decimal, apr: Decimal, term_months: int) -> Decimal:
+        """Calculate monthly payment using amortization formula."""
+        # TODO: Implement amortization formula
+        raise NotImplementedError("Calculate monthly payment not yet implemented")
+    
+    def validate_principal(self, principal: Decimal) -> None:
+        """Validate principal amount within business rules."""
+        # TODO: Implement validation logic
+        raise NotImplementedError("Principal validation not yet implemented")
+    
+    def convert_apr_to_monthly_rate(self, apr: Decimal) -> Decimal:
+        """Convert APR to monthly rate with 6 decimal precision."""
+        # TODO: Implement conversion logic
+        raise NotImplementedError("APR conversion not yet implemented")
+```
+
+### Step 2: Run Tests and Watch Them Fail Differently
+
+```bash
+python3 -m pytest tests/test_financial.py -v
+```
+
+Now tests will fail with `NotImplementedError` instead of `ModuleNotFoundError` - progress! 🎉
+
+### Step 3: Implement One Method at a Time
+
+**TDD Green Phase Process**:
+
+1. **Make the first test pass** - implement `calculate_monthly_payment()`
+2. **Run tests** - verify the specific test passes
+3. **Make the second test pass** - implement `validate_principal()`
+4. **Continue until all tests pass**
+
+### 🧮 Financial Formulas to Implement
+
+**Monthly Payment Formula (Amortization)**:
+```
+M = P × [r(1+r)^n] / [(1+r)^n - 1]
+
+Where:
+- M = Monthly payment
+- P = Principal (loan amount)
+- r = Monthly interest rate (APR/12/100)
+- n = Number of payments (term in months)
+```
+
+**APR to Monthly Rate**:
+```
+monthly_rate = (apr / 100) / 12
+```
+
+## 🔄 **TDD Refactor Phase**
+
+After all tests pass (Green phase):
+
+1. **Improve code quality** while keeping tests green
+2. **Add documentation and type hints**
+3. **Extract common validation logic**
+4. **Optimize calculations for precision**
+
+## ✅ **Success Criteria - Updated**
 
 By the end of this lesson, you should have:
 
-- [ ] Working project structure with proper Python packages
-- [ ] pytest configured and running
-- [ ] Individual entity with age validation
-- [ ] Student entity inheriting from Individual
-- [ ] Application entity with business rule validation
-- [ ] 100% test coverage for all entities
-- [ ] All tests passing
-- [ ] Clean, readable code following Python conventions
+- [x] Working project structure with proper Python packages
+- [x] pytest configured and running
+- [x] Comprehensive failing tests (Red phase complete!)
+- [ ] FinancialCalculator class with working methods
+- [ ] All 4 tests passing (Green phase)
+- [ ] Clean, refactored code (Refactor phase)
+- [ ] 100% test coverage for financial calculations
 
-## 🔗 Next Lesson Preview
+## 🔬 **What Makes This Great TDD**
 
-**Lesson 02** will focus on the Financial Engine:
-- Loan calculation algorithms
-- Monthly payment computation
-- APR to monthly rate conversion
-- Interest calculation logic
+1. **Tests First**: We wrote comprehensive tests before any implementation
+2. **Business-Driven**: Tests encode real financial requirements from PRD
+3. **Clear Failures**: ModuleNotFoundError → NotImplementedError → Passing tests
+4. **Incremental**: One test, one method, one success at a time
+5. **Refactor-Safe**: Tests protect against regression during cleanup
 
-## 💡 Tips for Success
+## 💡 **Key TDD Insights from This Lesson**
 
-1. **Start Small**: Implement one test and one method at a time
-2. **Read the Docs**: Reference `docs/PRD.md` for exact business requirements
-3. **TDD Discipline**: Always write the test first
-4. **Refactor Frequently**: Clean up code after tests pass
-5. **Ask Questions**: Use the documentation to understand business context
+### ✨ **Why This Approach Works**
 
-## 🚀 Ready to Start?
+- **Tests as Specification**: Our tests clearly define what the calculator must do
+- **Confidence in Changes**: Tests catch regressions during refactoring  
+- **Minimal Implementation**: Only write code needed to pass tests
+- **Business Focus**: Financial domain drives technical implementation
 
-Begin by setting up the project structure, then start with your first failing test for the Individual entity!
+### 🎯 **Professional TDD Benefits**
+
+- **Design Emerges**: API design comes from test requirements, not assumptions
+- **Quality Built-In**: Code is testable by design (because tests came first!)
+- **Documentation**: Tests serve as executable specifications
+- **Regression Protection**: Future changes can't break existing functionality
+
+## 🔗 **Next Lesson Preview**
+
+**Lesson 02** will build on this foundation:
+- Domain entities (Individual, Student, Application)
+- Repository pattern for data access
+- Integration tests with SQLAlchemy
+- Service layer orchestration
+
+## 🚀 **Ready for Green Phase?**
+
+You now have the perfect TDD foundation. **Your mission**: Make those failing tests pass, one implementation at a time!
+
+```bash
+# Start here:
+python3 -m pytest tests/test_financial.py::TestFinancialCalculator::test_calculate_monthly_payment_with_valid_input_expect_correct_amount -v
+```
+
+Remember: **Write only enough code to make the current test pass!** 🎯
