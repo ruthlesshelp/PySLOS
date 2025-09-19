@@ -13,7 +13,7 @@ PySLOS implements a **Modular Layered Architecture** with these core layers:
 - **Service Layer**: Business logic and domain rules
 - **Financial Engine**: Loan calculations and amortization
 - **Data Access Layer**: SQLAlchemy ORM with Repository pattern
-- **Database Layer**: PostgreSQL with normalized schema
+- **Database Layer**: SQLite for simplicity with normalized schema
 
 **Key Design Patterns**: Repository, Factory, Domain Model, Data Mapper
 
@@ -50,7 +50,7 @@ Expected structure when implemented:
 
 - **Framework**: Flask for web layer
 - **ORM**: SQLAlchemy with Repository pattern
-- **Database**: PostgreSQL
+- **Database**: SQLite for simplicity
 - **Testing**: pytest with 100% coverage target
 - **Validation**: Marshmallow schemas
 - **Python**: 3.11+ required
